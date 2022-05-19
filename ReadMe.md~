@@ -1,0 +1,16 @@
+# Background
+
+## Task 1
+
+The first dataset, `timing_observations.csv` contains scheduled and observed stop arrivals and departures for Route 56. Task T1Q1 asks to calculate and plot the daily OTP during March 2022.
+
+To complete this task, a number of data cleaning operations are performed, although I suspect are redundant:
+1) Remove all dates outside of March 2022
+2) Remove all stops that should be be considered, and check to make sure that the dataframe is just left with the relevant stops
+
+I also converted all the timing data to seconds, taking a full day to contain 86400 seconds.
+
+For each day (there are 31 in total) I work out the OTP for trip_id. This is because Route 56 happens many times a day, and so the OTP is worked out for each trp_id. Note that as the trip_id is a long string, each unique trip_id is converted to a number, where the first trip of the day is identifed by 0, and increments by 1 for each new trip_id. As such, there is a plot for each day, with each plot containing the OTP for each trip_id that occured that day.
+
+
+Task T1Q2 asks to only use data for weekdays, calculate and plot the hourly OTP for Route 56, using scheduled_start_time to bin the data. This question was a little ambigious, as one could create plots for each date, presenting the OTP in terms of binned scheduled_start_date just for that day. What I choose to do, was actually to look more at the averages. So after removing the weekends from the data, I am left with five week days. Taking, for example, Monday, I took all the data associated with all the Mondays, and calculated the OTP for each hour that there was a bus scheduled to operate. As such, an hour will represent several Mondays. Hence, we can see how often a bus was on time between the hours of say 5am-6am every Monday. This will be represented by the x-axis label '5'.

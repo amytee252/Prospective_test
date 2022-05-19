@@ -131,15 +131,8 @@ for weekday in range(days):
 		df_hour = df_hour.drop(df_hour[df_hour.difference < 300].index)  
 	# OTP is [(total number of stops considered - total number of late stops)/ total number of stops considered)*100]
 	
-		OTP = round(( ((number_of_stops - df_hour.shape[0]) / (number_of_stops)) * 100), 0)
+		OTP = round(( ((number_of_stops - df_hour.shape[0]) / (number_of_stops)) * 100),0)
 		print(OTP)
 		result[hour] = OTP
 	print(result)
-	final_res = {}
-	for (k, v), (k1, v1) in zip(result.items(),int_to_hours.items() ) :
-		if k == k1:
-			key = v1
-			value = v
-			final_res[key] = value
-	print(final_res)
-	plot_percentage(df_day['day_of_week'].iloc[0], final_res)
+	plot_percentage(df_day['day_of_week'].iloc[0], result)

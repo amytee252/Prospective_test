@@ -8,14 +8,13 @@ import seaborn
 
 import matplotlib.pyplot as plt
 
-
-
 ### T1Q1. Calculate and plot the daily OTP for route 56 during March 2022. i.e. report_data vs. OTP percentage. Note the OTP is expected to vary day by day and be systematically different on weekends.
 
 df_TO = pd.read_csv("./prospective-ds-home-challenge/datasets/timing_observations.csv")
 print(df_TO)
 print(df_TO.info())
 
+#I suspect this data cleaning is pointless, but good to do it anyways for reassurance
 # March has 31 days
 # Want to select only rows of data that occur in March
 start_date = '2022-03-01'
@@ -54,34 +53,29 @@ days = df_TO_2['report_date'].nunique()
 
 #Convert all time data columns to seconds
 #SUPER CLUNKY CONVERT TO FUNCTION!!!!
-df_TO_2['scheduled_start_time'] = pd.to_datetime(df_TO_2.scheduled_start_time, format = '%H:%M:%S')
-df_TO_2['scheduled_start_time'] = df_TO_2['scheduled_start_time'].dt.hour * 3600 + df_TO_2['scheduled_start_time'].dt.minute * 60 + df_TO_2['scheduled_start_time'].dt.second
+def time_convert(dataframe, column_name):
+	print(column_name)
+	dataframe[column_name] = pd.to_datetime(dataframe[column_name], format =  '%H:%M:%S')
+	dataframe[column_name] = dataframe[column_name].dt.hour * 3600 + dataframe[column_name].dt.minute * 60 + 			 	 	dataframe[column_name].dt.second
 
-
-df_TO_2['scheduled_arrival'] = pd.to_datetime(df_TO_2.scheduled_arrival, format = '%H:%M:%S')
-df_TO_2['scheduled_arrival'] = df_TO_2['scheduled_arrival'].dt.hour * 3600 + df_TO_2['scheduled_arrival'].dt.minute * 60 + df_TO_2['scheduled_arrival'].dt.second
-
-df_TO_2['scheduled_departure'] = pd.to_datetime(df_TO_2.scheduled_departure, format = '%H:%M:%S')
-df_TO_2['scheduled_departure'] = df_TO_2['scheduled_departure'].dt.hour * 3600 + df_TO_2['scheduled_departure'].dt.minute * 60 + df_TO_2['scheduled_departure'].dt.second
-
-df_TO_2['observed_arrival'] = pd.to_datetime(df_TO_2.observed_arrival, format = '%H:%M:%S')
-df_TO_2['observed_arrival'] = df_TO_2['observed_arrival'].dt.hour * 3600 + df_TO_2['observed_arrival'].dt.minute * 60 + df_TO_2['observed_arrival'].dt.second
-
-df_TO_2['observed_departure'] = pd.to_datetime(df_TO_2.observed_departure, format = '%H:%M:%S')
-df_TO_2['observed_departure'] = df_TO_2['observed_departure'].dt.hour * 3600 + df_TO_2['observed_departure'].dt.minute * 60 + df_TO_2['observed_departure'].dt.second
+time_convert(df_TO_2, 'scheduled_start_time')
+time_convert(df_TO_2, 'scheduled_arrival')
+time_convert(df_TO_2, 'scheduled_departure')
+time_convert(df_TO_2, 'observed_arrival')
+time_convert(df_TO_2, 'observed_departure')
 
 print(df_TO_2)
 
 def plot_percentage(day, result):
 	plt.figure() 
-	plt.title('OTP for day' + str(day))
+	plt.title('OTP for date ' + str(day))
 	names = list(result.keys() )
 	percentages = list(result.values() )
 	plt.bar(range(len(result)), percentages, tick_label = names)
 	plt.ylabel('Percentages(%)')
-	plt.xlabel('Trip number for day' + str(day))
+	plt.xlabel('Trip number for date ' + str(day))
 	plt.xticks(rotation=90)
-	plt.savefig('plots/OTP_day' + str(day) + '.png')
+	plt.savefig('plots/OTP_day_' + str(day) + '.png')
 	plt.figure().clear()
 	plt.close()
 	plt.cla()
@@ -124,6 +118,9 @@ for day in range(days):
 		print(OTP)
 		result[trip] = OTP
 	print(result)
+	for k,v in int_to_days.items():
+		if k == day:
+			day = v
 	plot_percentage(day, result)
 	
 

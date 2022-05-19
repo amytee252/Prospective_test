@@ -63,29 +63,16 @@ df_trip = {}
 
 days = df_TO_2['day_of_week'].nunique()
 
+def time_convert(dataframe, column_name):
+	print(column_name)
+	dataframe[column_name] = pd.to_datetime(dataframe[column_name], format =  '%H:%M:%S')
+	dataframe[column_name] = dataframe[column_name].dt.hour * 3600 + dataframe[column_name].dt.minute * 60 + dataframe[column_name].dt.second			
 
-
-
-
-
-#Convert all time data columns to seconds
-#SUPER CLUNKY CONVERT TO FUNCTION!!!!
-df_TO_2['scheduled_start_time'] = pd.to_datetime(df_TO_2.scheduled_start_time, format = '%H:%M:%S')
-df_TO_2['scheduled_start_time'] = df_TO_2['scheduled_start_time'].dt.hour * 3600 + df_TO_2['scheduled_start_time'].dt.minute * 60 + df_TO_2['scheduled_start_time'].dt.second
-
-df_TO_2['scheduled_arrival'] = pd.to_datetime(df_TO_2.scheduled_arrival, format = '%H:%M:%S')
-df_TO_2['scheduled_arrival'] = df_TO_2['scheduled_arrival'].dt.hour * 3600 + df_TO_2['scheduled_arrival'].dt.minute * 60 + df_TO_2['scheduled_arrival'].dt.second
-
-df_TO_2['scheduled_departure'] = pd.to_datetime(df_TO_2.scheduled_departure, format = '%H:%M:%S')
-df_TO_2['scheduled_departure'] = df_TO_2['scheduled_departure'].dt.hour * 3600 + df_TO_2['scheduled_departure'].dt.minute * 60 + df_TO_2['scheduled_departure'].dt.second
-
-df_TO_2['observed_arrival'] = pd.to_datetime(df_TO_2.observed_arrival, format = '%H:%M:%S')
-df_TO_2['observed_arrival'] = df_TO_2['observed_arrival'].dt.hour * 3600 + df_TO_2['observed_arrival'].dt.minute * 60 + df_TO_2['observed_arrival'].dt.second
-
-df_TO_2['observed_departure'] = pd.to_datetime(df_TO_2.observed_departure, format = '%H:%M:%S')
-df_TO_2['observed_departure'] = df_TO_2['observed_departure'].dt.hour * 3600 + df_TO_2['observed_departure'].dt.minute * 60 + df_TO_2['observed_departure'].dt.second
-
-
+time_convert(df_TO_2, 'scheduled_start_time')
+time_convert(df_TO_2, 'scheduled_arrival')
+time_convert(df_TO_2, 'scheduled_departure')
+time_convert(df_TO_2, 'observed_arrival')
+time_convert(df_TO_2, 'observed_departure')
 
 print(df_TO_2)
 print(df_TO_2.info() )
@@ -141,7 +128,7 @@ for weekday in range(days):
 			df_hour['difference'] = abs(df_hour['scheduled_departure'] - df_hour['observed_departure'])
 		#print(df_trip)
 	#Calculate OTP
-		df_hour = df_hour.drop(df_hour[df_hour.difference < 300].index)
+		df_hour = df_hour.drop(df_hour[df_hour.difference < 300].index)  
 	# OTP is [(total number of stops considered - total number of late stops)/ total number of stops considered)*100]
 	
 		OTP = round(( ((number_of_stops - df_hour.shape[0]) / (number_of_stops)) * 100), 0)
@@ -150,7 +137,6 @@ for weekday in range(days):
 	print(result)
 	final_res = {}
 	for (k, v), (k1, v1) in zip(result.items(),int_to_hours.items() ) :
-		print(k, v,  k1, v1)
 		if k == k1:
 			key = v1
 			value = v

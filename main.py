@@ -45,11 +45,14 @@ days = df_TO_2['report_date'].nunique()
 for day in range(days):
 	print(day)
 	df_day[day] = pd.DataFrame()
-	df_day[day] = grouped_day.get_group(grouped_day)
+	df_day[day] = grouped_day.get_group(day)
+	trips = df_day[day]['trip_id'].nunique()
+	grouped_trip = df_day[day].groupby(['trip_id'])
 	print(df_day[day])
-	#for trip in range(trip_num):
-	#	df_trip[trip] = pd.DataFrame()
-	#	print(df[trip])
+	for trip in range(trips):
+		df_trip[trip] = pd.DataFrame()
+		df_trip[trip] = grouped_trip.get_group(trip)
+		
 	
 
 

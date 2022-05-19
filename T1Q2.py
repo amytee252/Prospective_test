@@ -1,4 +1,5 @@
-#### Script that contains solutions to Prospective test for task T1Q1
+### Script that contains solutions to T1Q2
+
 import numpy as np
 
 import pandas as pd
@@ -7,11 +8,10 @@ from pandas import Series
 import seaborn
 
 import matplotlib.pyplot as plt
+from pandas.tseries.offsets import BDay
 
 
-
-### T1Q1. Calculate and plot the daily OTP for route 56 during March 2022. i.e. report_data vs. OTP percentage. Note the OTP is expected to vary day by day and be systematically different on weekends.
-
+## T1Q2: Only including data for weekdays, calculate and plot the hourly OTP for route 56. Use the schedule_start_time hour to bin the data.
 df_TO = pd.read_csv("./prospective-ds-home-challenge/datasets/timing_observations.csv")
 print(df_TO)
 print(df_TO.info())
@@ -27,6 +27,9 @@ df_TO_2.dropna() # Remove any empty rows of date
 print(df_TO_2)
 
 
+df_TO_2['report_date'] = pd.to_datetime(df_TO_2.report_date, format = '%Y-%m-%d')
+df_TO_2 = df_TO_2[df_TO_2.report_date.dt.weekday < 5]
+
 
 # Want to only keep rows of data that contain 'true' in the timing_point column
 df_TO_2 = df_TO_2[df_TO_2.timing_point] #This does the trick
@@ -34,6 +37,12 @@ print('removing the false')
 print(df_TO_2['timing_point'])
 print(df_TO_2[~df_TO_2['timing_point']]) #As a check, print to see if there are any 'false' values remaining in dataframe to see if above implemented correctly. There shouldn't be.
 
+df_TO_2['scheduled_start_time'] = df_TO_2['scheduled_start_time'].astype(str)
+df_TO_2['time_bin'] = df_TO_2['scheduled_start_time'].str[:2]
+df_TO_2['time_bin'] = df_TO_2['time_bin'].astype(int)
+df_TO_2['day_of_week'] = df_TO_2['report_date'].dt.day_name()
+df_TO_2['day_of_week'] = df_TO_2['day_of_week'].astype(str)
+print('hello ' , df_TO_2['day_of_week'].unique() )
 
 days = df_TO_2['report_date'].unique()  #store all unique days
 days_to_int = {day: i  for i, day in enumerate(days)}
@@ -48,13 +57,17 @@ grouped_day = df_TO_2.groupby(['report_date'])
 df_day = {}
 df_trip = {}
 
-days = df_TO_2['report_date'].nunique()
+days = df_TO_2['day_of_week'].nunique()
+
+
+
+
+
 
 #Convert all time data columns to seconds
 #SUPER CLUNKY CONVERT TO FUNCTION!!!!
 df_TO_2['scheduled_start_time'] = pd.to_datetime(df_TO_2.scheduled_start_time, format = '%H:%M:%S')
 df_TO_2['scheduled_start_time'] = df_TO_2['scheduled_start_time'].dt.hour * 3600 + df_TO_2['scheduled_start_time'].dt.minute * 60 + df_TO_2['scheduled_start_time'].dt.second
-
 
 df_TO_2['scheduled_arrival'] = pd.to_datetime(df_TO_2.scheduled_arrival, format = '%H:%M:%S')
 df_TO_2['scheduled_arrival'] = df_TO_2['scheduled_arrival'].dt.hour * 3600 + df_TO_2['scheduled_arrival'].dt.minute * 60 + df_TO_2['scheduled_arrival'].dt.second
@@ -68,7 +81,16 @@ df_TO_2['observed_arrival'] = df_TO_2['observed_arrival'].dt.hour * 3600 + df_TO
 df_TO_2['observed_departure'] = pd.to_datetime(df_TO_2.observed_departure, format = '%H:%M:%S')
 df_TO_2['observed_departure'] = df_TO_2['observed_departure'].dt.hour * 3600 + df_TO_2['observed_departure'].dt.minute * 60 + df_TO_2['observed_departure'].dt.second
 
+
+
 print(df_TO_2)
+print(df_TO_2.info() )
+
+#create dictionaries to hold multiple dataframes
+df_day = {}
+df_hour = {}
+
+
 
 def plot_percentage(day, result):
 	plt.figure() 
@@ -86,55 +108,38 @@ def plot_percentage(day, result):
 	plt.clf()
 	
 
-for day in range(days):
-	#print(day)
+for weekday in range(days):
+	print(weekday)
 	df_day = pd.DataFrame()  #Create an empty dataframe
-	df_result = pd.DataFrame()
-	df_day = grouped_day.get_group(day) #Fill dataframe with only one day's rows of data, e.g day 1 only
-	trips = df_day['trip_id'].unique() #Get the unique trip ids
-	trips_to_int = {trip: i for i, trip in enumerate(trips)} #convert each unique trip id to a number
-	df_day= df_day.replace(trips_to_int) # replace each trip id with a number
-	#print(df_day[day])
-	grouped_trip = df_day.groupby(['trip_id']) #group rows of data by their trip_id
+	df_day = grouped_day.get_group(weekday) #Fill dataframe with only one day's rows of data, e.g day 1 only
+	grouped_hour = df_day.groupby(['time_bin']) #group rows of data by their trip_id
 	#print(grouped_trip)
-	trips = df_day['trip_id'].nunique() # Get the number of unique trip ids
-	print('trips: ', trips)
+	hours = df_day['time_bin'].nunique() # Get the number of unique trip ids
+	print('hours: ', type(hours))
 	result = {}
-	#print(df_day[day])
-	for trip in range(trips):
-		df_trip = pd.DataFrame() #Create an empty dataframe
-		df_trip = grouped_trip.get_group(trip) # Fill will information of a single trip_id.
-		max_value = df_trip['sequence_number'].max()
-		number_of_stops = df_trip.shape[0]
+	print(df_day)
+	for hour in range(hours):
+		df_hour = pd.DataFrame()
+		df_hour = grouped_hour.get_group(hour) # Fill will information of a single trip_id.
+'''
+		max_value = df_hour['sequence_number'].max()
+		number_of_stops = df_hour.shape[0]
 		#print('max sequence number: ', max_value)
 		#print('min sequence number: ', min_value)
 		if max_value:
-			df_trip['difference'] = abs(df_trip['scheduled_arrival'] - df_trip['observed_arrival'])
+			df_hour['difference'] = abs(df_hour['scheduled_arrival'] - df_hour['observed_arrival'])
 		else:
-			df_trip['difference'] = abs(df_trip['scheduled_departure'] - df_trip['observed_departure'])
+			df_hour['difference'] = abs(df_hour['scheduled_departure'] - df_hour['observed_departure'])
 		#print(df_trip)
 	#Calculate OTP
-		df_trip = df_trip.drop(df_trip[df_trip.difference < 300].index)
+		df_hour = df_hour.drop(df_hour[df_hour.difference < 300].index)
 	# OTP is [(total number of stops considered - total number of late stops)/ total number of stops considered)*100]
 	
-		OTP = round(( ((number_of_stops - df_trip.shape[0]) / (number_of_stops)) * 100), 0)
+		OTP = round(( ((number_of_stops - df_hour.shape[0]) / (number_of_stops)) * 100), 0)
 		print(OTP)
-		result[trip] = OTP
+		result[hour] = OTP
 	print(result)
-	plot_percentage(day, result)
-	
-
-
-	
-	
-		
-		
-		
-		
-		
-	
-
-
-
+	plot_percentage(weekday, result)
+'''
 
 

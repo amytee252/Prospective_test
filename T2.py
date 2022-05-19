@@ -84,7 +84,7 @@ hist.tail()
 
 prediction = model.predict(test_ds)  #Make predictions on the testing data
 print('predictions')
-print(round(prediction, 6))
+print(np.round(prediction, 6))
 
 print(model.summary() )
 

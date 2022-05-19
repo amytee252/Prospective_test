@@ -90,7 +90,7 @@ def plot_percentage(day, result):
 	percentages = list(result.values() )
 	plt.bar(range(len(result)), percentages, tick_label = names)
 	plt.ylabel('Percentages(%)')
-	plt.xlabel('hour number' + str(day))
+	plt.xlabel('hour be' + str(day))
 	plt.xticks(rotation=90)
 	plt.savefig('plots/Hourly_OTP_' + str(day) + '.png')
 	plt.figure().clear()

@@ -37,7 +37,9 @@ print(df_TO_2[~df_TO_2['timing_point']]) #As a check, print to see if there are 
 
 days = df_TO_2['report_date'].unique()  #store all unique days
 days_to_int = {day: i  for i, day in enumerate(days)}
+int_to_days = {i: day  for i, day in enumerate(days)}
 print(days_to_int)
+print(int_to_days)
 df_TO_2 = df_TO_2.replace(days_to_int)
 print(df_TO_2)
 print(df_TO_2.info())
@@ -102,6 +104,7 @@ for day in range(days):
 	result = {}
 	#print(df_day[day])
 	for trip in range(trips):
+		print('trip ', trip)
 		df_trip = pd.DataFrame() #Create an empty dataframe
 		df_trip = grouped_trip.get_group(trip) # Fill will information of a single trip_id.
 		max_value = df_trip['sequence_number'].max()

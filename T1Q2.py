@@ -10,6 +10,8 @@ import seaborn
 import matplotlib.pyplot as plt
 from pandas.tseries.offsets import BDay
 
+import array as arr
+
 
 ## T1Q2: Only including data for weekdays, calculate and plot the hourly OTP for route 56. Use the schedule_start_time hour to bin the data.
 df_TO = pd.read_csv("./prospective-ds-home-challenge/datasets/timing_observations.csv")
@@ -46,7 +48,9 @@ print('hello ' , df_TO_2['day_of_week'].unique() )
 
 days = df_TO_2['report_date'].unique()  #store all unique days
 days_to_int = {day: i  for i, day in enumerate(days)}
+int_to_days = {i: day for i, day in enumerate(days)} #..and vice versa! integers(key) and original subject IDs(values)
 print(days_to_int)
+print(int_to_days)
 df_TO_2 = df_TO_2.replace(days_to_int)
 print(df_TO_2)
 print(df_TO_2.info())
@@ -94,14 +98,14 @@ df_hour = {}
 
 def plot_percentage(day, result):
 	plt.figure() 
-	plt.title('OTP for day' + str(day))
+	plt.title('OTP for ' + str(day))
 	names = list(result.keys() )
 	percentages = list(result.values() )
 	plt.bar(range(len(result)), percentages, tick_label = names)
 	plt.ylabel('Percentages(%)')
-	plt.xlabel('Trip number for day' + str(day))
+	plt.xlabel('hour number' + str(day))
 	plt.xticks(rotation=90)
-	plt.savefig('plots/OTP_day' + str(day) + '.png')
+	plt.savefig('plots/Hourly_OTP_' + str(day) + '.png')
 	plt.figure().clear()
 	plt.close()
 	plt.cla()
@@ -109,20 +113,25 @@ def plot_percentage(day, result):
 	
 
 for weekday in range(days):
+	print('weekday ', weekday)
 	print(weekday)
 	df_day = pd.DataFrame()  #Create an empty dataframe
 	df_day = grouped_day.get_group(weekday) #Fill dataframe with only one day's rows of data, e.g day 1 only
-	grouped_hour = df_day.groupby(['time_bin']) #group rows of data by their trip_id
-	#print(grouped_trip)
-	hours = df_day['time_bin'].nunique() # Get the number of unique trip ids
-	print('hours: ', type(hours))
+	hours = df_day['time_bin'].unique() # Get the number of unique trip ids
+	hours_to_int = {hour: i for i, hour in enumerate(hours)} #convert each unique trip id to a number
+	int_to_hours = {i: hour for i, hour in enumerate(hours)} #convert each unique trip id to a number
+	print(int_to_hours)
+
+	df_day= df_day.replace(hours_to_int) # replace each trip id with a number
 	result = {}
 	print(df_day)
+	grouped_hour = df_day.groupby(['time_bin']) #group rows of data by their trip_id
+	hours = df_day['time_bin'].nunique() # Get the number of unique trip ids
 	for hour in range(hours):
 		df_hour = pd.DataFrame()
 		df_hour = grouped_hour.get_group(hour) # Fill will information of a single trip_id.
-'''
-		max_value = df_hour['sequence_number'].max()
+		print('hour ', hour)
+		max_value = df_hour['time_bin'].max()
 		number_of_stops = df_hour.shape[0]
 		#print('max sequence number: ', max_value)
 		#print('min sequence number: ', min_value)
@@ -139,7 +148,12 @@ for weekday in range(days):
 		print(OTP)
 		result[hour] = OTP
 	print(result)
-	plot_percentage(weekday, result)
-'''
-
-
+	final_res = {}
+	for (k, v), (k1, v1) in zip(result.items(),int_to_hours.items() ) :
+		print(k, v,  k1, v1)
+		if k == k1:
+			key = v1
+			value = v
+			final_res[key] = value
+	print(final_res)
+	plot_percentage(df_day['day_of_week'].iloc[0], final_res)

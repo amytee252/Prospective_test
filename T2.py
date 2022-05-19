@@ -89,7 +89,9 @@ print(np.round(prediction, 6))
 print(model.summary() )
 
 
-mse = tf.metrics.mean_squared_error( test_target, prediction) #Calculate mae
+mse = tf.metrics.mean_squared_error( test_target, prediction) #Calculate mse
+print('MSE')
+print(mse)
 
 
 

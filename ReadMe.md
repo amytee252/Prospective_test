@@ -23,10 +23,24 @@ When doing this task, it was assumed that the data was already ordered. I also r
 
 ## Task 2
 
+This task is run with `python T2.py`
+
 The aim of the task was to building a machine learning (ML) model that predicted the `dwell_time` of a bus, with the ultimte aim of trying to deduce whether or not once could identify whether a bus stopped at an urban bus stop or not (although I never got this far!). I implemented a regression model using a forward feed neural network. I found that keeping the network very simple with one input later, one hidden layer, and a single output layer was enough. The number of nodes in the input layer and hidden layer corresponds to the number of features. There is a single output node, as we are trying to predict a single time here, as the target we are trying to predict is the dwell_time. 
 
 The model trains on the training data of which there is a 80/20 train/test split, trying to learn the patterns in the data, to then predict the dwell\_time on the test dataset. 
 
 Due to time constraints there has not been much parameter optimisation, although generally for regression problems there is a somewhat standard set of parameters. Hence, the input and hidden layer, both use the `ReLu` activation function, the `Adam` optimiser is used, and the learning rate is set to 0.0001. These parameters yield good results, as a plot is made of the true test dwell\_time values vs. the predicted dwell\_time values (using the test set), and it is very close, with values lying on the diagonal.
+
+
+# Requirements
+
+This requires a number of packages to be installed and run in a virtual enviornment. Please follow the instructions here:
+
+```
+python3 -m venv myenvNN
+source myenvNN/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+```
 
 

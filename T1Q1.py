@@ -42,7 +42,7 @@ days_to_int = {day: i  for i, day in enumerate(days)}
 int_to_days = {i: day  for i, day in enumerate(days)}
 print(days_to_int)
 print(int_to_days)
-df_TO_2 = df_TO_2.replace(days_to_int)
+df_TO_2 = df_TO_2.replace(days_to_int)  #Replace report_date with an integer
 print(df_TO_2)
 print(df_TO_2.info())
 
@@ -54,7 +54,7 @@ df_trip = {}
 
 days = df_TO_2['report_date'].nunique()
 
-
+#Convert all columns to time in seconds
 time_convert(df_TO_2, 'scheduled_start_time')
 time_convert(df_TO_2, 'scheduled_arrival')
 time_convert(df_TO_2, 'scheduled_departure')
@@ -66,7 +66,6 @@ print(df_TO_2)
 for day in range(days):
 	#print(day)
 	df_day = pd.DataFrame()  #Create an empty dataframe
-	df_result = pd.DataFrame()
 	df_day = grouped_day.get_group(day) #Fill dataframe with only one day's rows of data, e.g day 1 only
 	trips = df_day['trip_id'].unique() #Get the unique trip ids
 	trips_to_int = {trip: i for i, trip in enumerate(trips)} #convert each unique trip id to a number
@@ -82,10 +81,9 @@ for day in range(days):
 		print('trip ', trip)
 		df_trip = pd.DataFrame() #Create an empty dataframe
 		df_trip = grouped_trip.get_group(trip) # Fill will information of a single trip_id.
-		max_value = df_trip['sequence_number'].max()
+		max_value = df_trip['sequence_number'].max() 
 		number_of_stops = df_trip.shape[0]
-		#print('max sequence number: ', max_value)
-		#print('min sequence number: ', min_value)
+
 		if max_value:
 			df_trip['difference'] = abs(df_trip['scheduled_arrival'] - df_trip['observed_arrival'])
 		else:

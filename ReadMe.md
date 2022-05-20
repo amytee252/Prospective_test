@@ -19,7 +19,7 @@ For each day (there are 31 in total) I work out the OTP for trip\_id. This is be
 
 Task T1Q2 asks to only use data for weekdays, calculate and plot the hourly OTP for Route 56, using scheduled_start_time to bin the data. This question was a little ambigious, as one could create plots for each date, presenting the OTP in terms of binned scheduled_start_date just for that day. What I choose to do, was actually to look more at the averages. So after removing the weekends from the data, I am left with five week days. Taking, for example, Monday, I took all the data associated with all the Mondays, and calculated the OTP for each hour that there was a bus scheduled to operate. As such, an hour will represent several Mondays. Hence, we can see how often a bus was on time between the hours of say 5am-6am every Monday. This will be represented by the x-axis label '5'. This is repeated for all the days of the week.
 
-When doing this task, it was assumed that the data was already ordered. I also rounded numbers where appropriate.
+When doing this task, it was assumed that the data was already ordered. I also rounded numbers where appropriate. It is also assumed that the largest `sequence_number` represents the last stop for the bus. I also assume there are no public holidays during the weekdays in March, as buses sometimes operate a weekend schedule when it is a public holiday.
 
 ## Task 2
 

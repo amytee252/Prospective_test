@@ -19,13 +19,16 @@ def swarm_plot(y_var, x_var, dataframe):
 	sns_plot.set_xticklabels(sns_plot.get_xticklabels(),rotation = 90)
 	sns_plot.tick_params(axis='x', labelsize=5)
 	fig1.savefig('plots/' + y_var + '_' + x_var + '.png', dpi = 300)
+	fig1.clf()
+
 
 	sns_boxplot = sns.boxplot(y=dataframe[y_var], x=dataframe[x_var], data=dataframe, whis=np.inf)
 	sns_boxplot.set_xticklabels(sns_plot.get_xticklabels(),rotation = 90)
 	sns_boxplot.tick_params(axis='x', labelsize=5)
 	fig2 = sns_boxplot.get_figure()
 	fig2.savefig('plots/' + y_var + '_' + x_var + '_boxplot.png', dpi = 300)
-	
+	fig2.clf()
+
 
 
 
@@ -34,15 +37,15 @@ strings = ['stop_id', 'wet_weather_score', 'boardings', 'alightings', 'is_urban'
 # Creates 2D scatterplots  
 def scatter_plot(y_var, x_var, dataframe):
 	y_label = y_var
-	x_label = x_var + " + " + y_var
-	x_label_save = x_var + "+" + y_var
+	x_label = x_var 
 	sns_scatterplot = sns.scatterplot(y=dataframe[y_var], x= dataframe[x_var], data=dataframe, s=2)
 	sns_scatterplot.set_xlabel(x_label)
 	sns_scatterplot.set_ylabel(y_label)
-	handles, labels = sns_scatterplot.get_legend_handles_labels()
-	sns_scatterplot.legend()
+	#handles, labels = sns_scatterplot.get_legend_handles_labels()
+	#sns_scatterplot.legend()
 	fig3 = sns_scatterplot.get_figure()
-	fig3.savefig('plots/' + y_label + '_' + x_label_save + '_scatterplot.png', dpi = 300)
+	fig3.savefig('plots/' + y_label + '_' + x_label + '_scatterplot.png', dpi = 300)
+	fig3.clf()
 
 def plot_percentage_hourly(day, result):
 	plt.figure() 

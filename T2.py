@@ -36,7 +36,7 @@ df.drop(to_drop, inplace=True, axis=1) #Remove the columns of data
 print(df)
 
 for column in df.columns:
-	print('Creating swarm plot of ', str(column) , 'verses dwell time') 
+	print('Creating plots of ', str(column) , 'verses dwell time') 
 	swarm_plot(str(column), 'dwell_time',df)
 	scatter_plot(str(column), 'dwell_time', df)
 
@@ -56,8 +56,6 @@ print(df)
 
 train_dataset = df.sample(frac=0.8, random_state=0)
 test_dataset = df.drop(train_dataset.index)
-
-#sns.pairplot(train_dataset[['stop_id', 'wet_weather_score', 'boardings', 'alightings', 'dwell_time']], diag_kind='kde')
 
 batch_size = 1
 

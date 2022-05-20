@@ -8,6 +8,14 @@ import seaborn
 
 import matplotlib.pyplot as plt
 
+import tensorflow as tf
+from tensorflow.keras import layers
+from tensorflow import feature_column
+
+
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.model_selection import train_test_split
+
 def time_convert(dataframe, column_name):
 	print(column_name)
 	dataframe[column_name] = pd.to_datetime(dataframe[column_name], format =  '%H:%M:%S')

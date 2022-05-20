@@ -16,19 +16,16 @@ from Functions import *
 from Plots import *
 
 df1 = pd.read_csv("./prospective-ds-home-challenge/datasets/data_observations.csv")
-#df1['is_urban'] = True
 df2 = pd.read_csv("./prospective-ds-home-challenge/datasets/data_stops.csv")
+
 print(df2)
 print(df2.info() )
-dict = {}
+
 df2['is_urban'] = df2['is_urban'].astype(bool)
-#df2['is_urban'] = df2['is_urban'].apply(true if
 df1['is_urban'] = df1['stop_id'].map(df2.set_index('stop_id')['is_urban'])
-#frames = [df1, df2]
-#df = pd.concat(frames)
-#print(df.info())
-print(df1['stop_id'] == 195)
+
 df = df1
+
 df.isna().sum() #Detect empty cells in the data
 df = df.dropna() #remove rows containing empty cells
 print(df)
@@ -37,6 +34,11 @@ print(df)
 to_drop = ['date' ]  #List of columns of data to drop from dataframe as they are irrelevant for training
 df.drop(to_drop, inplace=True, axis=1) #Remove the columns of data
 print(df)
+
+for column in df.columns:
+	print('Creating swarm plot of ', str(column) , 'verses dwell time') 
+	swarm_plot(str(column), 'dwell_time',df)
+	scatter_plot(str(column), 'dwell_time', df)
 
 df_copy = df.copy() 
 

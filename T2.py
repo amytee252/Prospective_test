@@ -12,9 +12,23 @@ from tensorflow import feature_column
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 
-df = pd.read_csv("./prospective-ds-home-challenge/datasets/data_observations.csv")
-print(df.info())
-print(df)
+from Functions import *
+from Plots import *
+
+df1 = pd.read_csv("./prospective-ds-home-challenge/datasets/data_observations.csv")
+#df1['is_urban'] = True
+df2 = pd.read_csv("./prospective-ds-home-challenge/datasets/data_stops.csv")
+print(df2)
+print(df2.info() )
+dict = {}
+df2['is_urban'] = df2['is_urban'].astype(bool)
+#df2['is_urban'] = df2['is_urban'].apply(true if
+df1['is_urban'] = df1['stop_id'].map(df2.set_index('stop_id')['is_urban'])
+#frames = [df1, df2]
+#df = pd.concat(frames)
+#print(df.info())
+print(df1['stop_id'] == 195)
+df = df1
 df.isna().sum() #Detect empty cells in the data
 df = df.dropna() #remove rows containing empty cells
 print(df)
@@ -43,15 +57,6 @@ test_dataset = df.drop(train_dataset.index)
 
 #sns.pairplot(train_dataset[['stop_id', 'wet_weather_score', 'boardings', 'alightings', 'dwell_time']], diag_kind='kde')
 
-
-
-def df_to_dataset(dataframe,  batch_size=1):  #Function to convert the dataframe to a tensorflow dataframe that can be ML'd on. Temporarily remove the target column
-	dataframe = dataframe.copy()
-	new_df = dataframe.pop("dwell_time")
-	new_df =tf.convert_to_tensor(new_df)
-	return new_df
-
-
 batch_size = 1
 
 train_target = train_dataset["dwell_time"] 
@@ -60,6 +65,7 @@ test_target = test_dataset["dwell_time"]
 train_ds = df_to_dataset(train_dataset, batch_size=batch_size) #create coverted train dataset and select batch size
 
 test_ds = df_to_dataset(test_dataset,  batch_size=batch_size)
+
 
 
 tf.random.set_seed(42) 
@@ -71,7 +77,7 @@ model = tf.keras.Sequential([  #build NN
 			tf.keras.layers.Dense(1)
 ])
 
-model.compile( loss = tf.keras.losses.mae, #mae stands for mean absolute error
+model.compile( loss = tf.keras.losses.mse, #mae stands for mean squared error
               optimizer = tf.keras.optimizers.Adam(learning_rate=0.0001), #stochastic GD
               metrics = ['mse'])
 
@@ -88,55 +94,18 @@ print(np.round(prediction, 6))
 
 print(model.summary() )
 
-
 mse = tf.metrics.mean_squared_error( test_target, prediction) #Calculate mse
 print('MSE')
 print(mse)
 
-
-
 print(history.history.keys())
 x = 'mse' 
 y = 'val_mse'
-
-def plot_loss(x , y):
-	plt.figure
-	plt.plot(history.history[x])  #Make a plot of the mae (similar to loss) vs. epochs
-	plt.plot(history.history[y])
-	plt.title('model mse')
-	plt.ylabel('mse')
-	plt.xlabel('epoch')
-	plt.legend(['train', 'test'], loc='upper left')
-	plt.draw()
-	plt.savefig('plot.png')
-	plt.figure().clear()
-	plt.close()
-	plt.cla()
-	plt.clf()
-
 plot_loss(x,y)
 
 x_p=test_ds
 y_p=prediction
-def plot_train_test(x_p, y_p):	#Plot the predictions vs. true values with a scatter of the 'residuals'
-	plt.figure
-	plt.scatter(x_p, y_p, c='crimson', s =2)
-	p1 = max(max(y_p), max(x_p))
-	p2 = min(min(y_p), min(x_p))
-	plt.plot(['test','predictions'], [p1,p2], 'b-')
-	plt.xlabel('test')
-	plt.ylabel('predictions')
-	plt.axis('equal')
-	plt.legend([x_p, y_p], loc='upper left')
-	plt.draw()
-	plt.savefig('plot2.png')
-	plt.figure().clear()
-	plt.close()
-	plt.cla()
-	plt.clf()
-
 plot_train_test(x_p,y_p)
-
 
 
 

@@ -12,6 +12,9 @@ from pandas.tseries.offsets import BDay
 
 import array as arr
 
+from Functions import *
+from Plots import *
+
 
 ## T1Q2: Only including data for weekdays, calculate and plot the hourly OTP for route 56. Use the schedule_start_time hour to bin the data.
 df_TO = pd.read_csv("./prospective-ds-home-challenge/datasets/timing_observations.csv")
@@ -63,11 +66,6 @@ df_trip = {}
 
 days = df_TO_2['day_of_week'].nunique()
 
-def time_convert(dataframe, column_name):
-	print(column_name)
-	dataframe[column_name] = pd.to_datetime(dataframe[column_name], format =  '%H:%M:%S')
-	dataframe[column_name] = dataframe[column_name].dt.hour * 3600 + dataframe[column_name].dt.minute * 60 + dataframe[column_name].dt.second			
-
 time_convert(df_TO_2, 'scheduled_start_time')
 time_convert(df_TO_2, 'scheduled_arrival')
 time_convert(df_TO_2, 'scheduled_departure')
@@ -81,23 +79,6 @@ print(df_TO_2.info() )
 df_day = {}
 df_hour = {}
 
-
-
-def plot_percentage(day, result):
-	plt.figure() 
-	plt.title('OTP for ' + str(day))
-	names = list(result.keys() )
-	percentages = list(result.values() )
-	plt.bar(range(len(result)), percentages, tick_label = names)
-	plt.ylabel('Percentages(%)')
-	plt.xlabel('hour be' + str(day))
-	plt.xticks(rotation=90)
-	plt.savefig('plots/Hourly_OTP_' + str(day) + '.png')
-	plt.figure().clear()
-	plt.close()
-	plt.cla()
-	plt.clf()
-	
 
 for weekday in range(days):
 	print('weekday ', weekday)
@@ -135,4 +116,4 @@ for weekday in range(days):
 		print(OTP)
 		result[hour] = OTP
 	print(result)
-	plot_percentage(df_day['day_of_week'].iloc[0], result)
+	plot_percentage_hourly(df_day['day_of_week'].iloc[0], result)

@@ -8,6 +8,9 @@ import seaborn
 
 import matplotlib.pyplot as plt
 
+from Functions import *
+from Plots import *
+
 ### T1Q1. Calculate and plot the daily OTP for route 56 during March 2022. i.e. report_data vs. OTP percentage. Note the OTP is expected to vary day by day and be systematically different on weekends.
 
 df_TO = pd.read_csv("./prospective-ds-home-challenge/datasets/timing_observations.csv")
@@ -51,12 +54,6 @@ df_trip = {}
 
 days = df_TO_2['report_date'].nunique()
 
-#Convert all time data columns to seconds
-#SUPER CLUNKY CONVERT TO FUNCTION!!!!
-def time_convert(dataframe, column_name):
-	print(column_name)
-	dataframe[column_name] = pd.to_datetime(dataframe[column_name], format =  '%H:%M:%S')
-	dataframe[column_name] = dataframe[column_name].dt.hour * 3600 + dataframe[column_name].dt.minute * 60 + 			 	 	dataframe[column_name].dt.second
 
 time_convert(df_TO_2, 'scheduled_start_time')
 time_convert(df_TO_2, 'scheduled_arrival')
@@ -65,22 +62,6 @@ time_convert(df_TO_2, 'observed_arrival')
 time_convert(df_TO_2, 'observed_departure')
 
 print(df_TO_2)
-
-def plot_percentage(day, result):
-	plt.figure() 
-	plt.title('OTP for date ' + str(day))
-	names = list(result.keys() )
-	percentages = list(result.values() )
-	plt.bar(range(len(result)), percentages, tick_label = names)
-	plt.ylabel('Percentages(%)')
-	plt.xlabel('Trip number for date ' + str(day))
-	plt.xticks(rotation=90)
-	plt.savefig('plots/OTP_day_' + str(day) + '.png')
-	plt.figure().clear()
-	plt.close()
-	plt.cla()
-	plt.clf()
-	
 
 for day in range(days):
 	#print(day)
@@ -121,7 +102,7 @@ for day in range(days):
 	for k,v in int_to_days.items():
 		if k == day:
 			day = v
-	plot_percentage(day, result)
+	plot_percentage_day(day, result)
 	
 
 

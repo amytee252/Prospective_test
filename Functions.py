@@ -24,8 +24,9 @@ def time_convert(dataframe, column_name):
 
 def df_to_dataset(dataframe,  batch_size=1):  #Function to convert the dataframe to a tensorflow dataframe that can be ML'd on. Temporarily remove the target column
 	dataframe = dataframe.copy()
-	new_df = dataframe.pop("dwell_time")
-	new_df = dataframe.pop("is_urban")
+	new_df = dataframe.drop("dwell_time", axis=1)
+	new_df = dataframe.drop("is_urban", axis=1)
+	print("df_to_dataset: {}".format(new_df))
 	new_df = tf.convert_to_tensor(new_df)
 	return new_df
 
